@@ -10,7 +10,7 @@ long long lastReadPacktTime ;
 
 static int interrupt_cb(void *ctx)
 {
-    int timeout = 3;
+    int timeout = 30;
 
     if(av_gettime() - lastReadPacktTime > timeout*1000*1000)
     {
@@ -157,6 +157,7 @@ int main(int argc, char *argv[])
 
     while(true)
     {
+        memset(&packet, 0 , sizeof(packet));
         ret = ReadPacketFromSource();
         if(ret == 0)
         {
@@ -168,6 +169,7 @@ int main(int argc, char *argv[])
         }
         else
         {
+            cout << "read packet error, ret = " << ret << endl;
             break;
         }
     }
@@ -175,7 +177,7 @@ int main(int argc, char *argv[])
 Error:
     CloseInput();
     CloseOutput();
-
+    cout << "close in/out stream" << endl;
     return a.exec();
 }
 
