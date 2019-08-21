@@ -1,4 +1,4 @@
-#include <QtCore/QCoreApplication>
+#include <QtCore/QCoreApplication> 
 #include "pch.h"
 #include <iostream>
 using namespace std;
