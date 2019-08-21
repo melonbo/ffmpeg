@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include "pch.h"
+#include "pch.h" 
 #include <thread>
 #include <iostream>
 using namespace std;
