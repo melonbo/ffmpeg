@@ -1,0 +1,85 @@
+VideoPlayerWidget.cpp
+    VideoPlayer::initPlayer();
+        av_register_all();
+        avformat_network_init();
+        SDL_Init(SDL_INIT_AUDIO)
+    mPlayer = new VideoPlayer();
+    slotBtnClick()
+        mPlayer->startPlay(s.toStdString());
+
+startPlay()
+    std::thread([&](VideoPlayer *pointer)
+    {
+        pointer->readVideoFile();
+
+    }, this).detach();
+
+readVideoFile()
+    avformat_open_input()
+    avformat_find_stream_info()
+    getTotalTime()
+    if (videoStream >= 0)
+        avcodec_find_decoder()
+        avcodec_open2()
+        decodeVideoThread()
+    if (audioStream >= 0)
+        avcodec_find_decoder()
+        avcodec_open2()
+        重采样设置选项
+        openSDL();
+            //配置声卡
+            wanted_spec.callback = sdlAudioCallBackFunc;  // 回调函数
+            SDL_OpenAudioDevice()
+    while (1)
+        if (seek_req)
+            av_rescale_q()
+            av_seek_frame()
+        av_read_frame()
+        if (packet.stream_index == videoStream)
+            inputVideoQuene(packet);
+        if( packet.stream_index == audioStream )
+            inputAudioQuene(packet);
+
+decodeVideoThread():
+    //将解码后的YUV数据转换成RGB32
+    sws_getContext()
+    avpicture_fill()
+    while(1)
+        mConditon_Video->Lock();
+        AVPacket pkt1 = mVideoPacktList.front();
+        mVideoPacktList.pop_front();
+        mConditon_Video->Unlock();
+        avcodec_flush_buffers()
+        avcodec_send_packet()
+        avcodec_receive_frame()
+        while(1)///音视频同步
+            if(音频播放完)
+                break
+            else
+                ///没有音频的情况下，直接同步到外部时钟
+                audio_pts = (av_gettime() - mVideoStartTime) / 1000000.0;
+                audio_clock = audio_pts;
+
+            video_pts = video_clock;
+            if (video_pts <= audio_pts) break;//直接播
+            mSleep(delayTime);
+        sws_scale()
+        doDisplayVideo()
+
+
+sdlAudioCallBackFunc():
+    sdlAudioCallBack()
+        while (len > 0)
+            if (audio_buf_index >= audio_buf_size)//缓冲区空，需要解码
+                decodeAudioFrame()
+            memcpy(stream, (uint8_t *)audio_buf + audio_buf_index, len1);
+
+
+
+
+
+
+
+
+
+
