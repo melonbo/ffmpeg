@@ -1,0 +1,80 @@
+main:
+    avdevice_register_all();
+    avformat_network_init();
+    SDL_Init()
+    SDL_CreateWindow()
+    SDL_CreateRenderer()
+    stream_open()
+    event_loop()
+
+event_loop:
+    refresh_loop_wait_event()
+    switch (event.type)：
+        case SDLK_LEFT:
+        case SDLK_RIGHT:
+        case SDLK_g:
+    do_seek:
+
+stream_open：
+    VideoState *is = (VideoState*)av_mallocz(sizeof(VideoState));;
+    frame_queue_init()
+    packet_queue_init()
+    is->continue_read_thread = SDL_CreateCond()
+    init_clock()
+    SDL_CreateThread(read_thread, "read_thread", is);
+
+
+init_clock(Clock *c, int *queue_serial)://输入音视频时钟、数据包队列
+    c->speed = 1.0;
+    c->paused = 0;
+    c->queue_serial = queue_serial;
+    set_clock(c, NAN, -1);
+        double time = av_gettime_relative() / 1000000.0;
+        set_clock_at(c, pts, serial, time);
+            c->pts = pts;
+            c->last_updated = time;
+            c->pts_drift = c->pts - time;
+            c->serial = serial;
+
+
+static int read_thread(void *arg)：
+    avformat_open_input()
+    avformat_find_stream_info()
+    stream_component_open(is, st_index[AVMEDIA_TYPE_AUDIO]);//打开音频
+    stream_component_open(is, st_index[AVMEDIA_TYPE_VIDEO]);//打开视频
+    for (;;)
+        av_read_frame(ic, pkt);
+
+
+stream_component_open():
+    avcodec_find_decoder()
+    case AVMEDIA_TYPE_AUDIO:
+        audio_open()
+        decoder_init()
+        decoder_start(&is->auddec, audio_thread, is)
+    case AVMEDIA_TYPE_VIDEO:
+        decoder_init()
+        decoder_start(&is->viddec, video_thread, is)
+    case AVMEDIA_TYPE_SUBTITLE:
+        decoder_init()
+        decoder_start(&is->subdec, subtitle_thread, is)
+
+
+static int audio_thread(void *arg):
+    decoder_decode_frame()
+    frame_queue_push()
+
+static int video_thread(void *arg):
+    av_guess_frame_rate()
+    pFrameYUV=av_frame_alloc();
+    sws_getContext()
+    for (;;)
+        get_video_frame(is, frame)
+        sws_scale()
+        queue_picture()
+
+
+
+
+
+
